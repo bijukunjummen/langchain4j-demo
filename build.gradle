@@ -1,0 +1,31 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.1'
+	id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'org.bk.langchain4j'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation("io.projectreactor:reactor-core")
+	implementation 'org.springframework.session:spring-session-core'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'io.projectreactor:reactor-test'
+	implementation("dev.langchain4j:langchain4j:0.25.0")
+	implementation("dev.langchain4j:langchain4j-open-ai:0.25.0")
+	implementation("dev.langchain4j:langchain4j-vertex-ai-gemini:0.25.0")
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
