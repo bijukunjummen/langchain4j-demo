@@ -6,8 +6,9 @@ import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.input.PromptTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,8 @@ public class CustomConversationalChain implements Chain<String, String> {
     private final ChatMemory chatMemory;
 
     private final ChatLanguageModel chatLanguageModel;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomConversationalChain.class);
 
     private final String memoryKey;
 
@@ -33,7 +36,7 @@ public class CustomConversationalChain implements Chain<String, String> {
     public String execute(String message) {
         Map<String, Object> withMemory = createMapWithMemory(chatMemory, message);
         String prompt = this.promptTemplate.apply(withMemory).text();
-        System.out.println(prompt);
+        LOGGER.debug("Generated prompt: {}", prompt);
         String aiResponse = chatLanguageModel.generate(prompt);
         chatMemory.add(UserMessage.userMessage(message));
         chatMemory.add(AiMessage.aiMessage(aiResponse));
@@ -42,13 +45,11 @@ public class CustomConversationalChain implements Chain<String, String> {
     }
 
     private Map<String, Object> createMapWithMemory(ChatMemory chatMemory, String userMessage) {
-        Map<String, Object> mapWithMemory = new HashMap<>();
-        mapWithMemory.put(memoryKey, chatMemory.messages()
-                .stream()
-                .map(chatMessage -> chatMessage.type().name() + ":" + chatMessage.text())
-                .collect(Collectors.joining("\n")));
-        mapWithMemory.put(QUESTION_KEY, userMessage);
-        return mapWithMemory;
+        return  Map.of(memoryKey, chatMemory.messages()
+                        .stream()
+                        .map(chatMessage -> chatMessage.type().name() + ":" + chatMessage.text())
+                        .collect(Collectors.joining("\n")),
+                QUESTION_KEY, userMessage);
     }
 
     public static final class Builder {
