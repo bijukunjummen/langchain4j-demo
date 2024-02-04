@@ -1,8 +1,12 @@
 package org.bk.langchain4j.service;
 
-import dev.langchain4j.chain.ConversationalChain;
+import dev.langchain4j.memory.ChatMemory;
+import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.input.PromptTemplate;
 import dev.langchain4j.model.openai.OpenAiChatModel;
+import dev.langchain4j.store.memory.chat.ChatMemoryStore;
+import dev.langchain4j.store.memory.chat.InMemoryChatMemoryStore;
 import org.bk.langchain4j.OpenApiProperties;
 import org.bk.langchain4j.model.Message;
 import org.bk.langchain4j.model.MessageSender;
@@ -14,16 +18,34 @@ import reactor.core.publisher.Sinks;
 @Service
 @SessionScope
 public class LangChainConversationService implements ConversationService {
-    private final ConversationalChain chain;
+    private final CustomConversationChain chain;
 
     private Sinks.Many<Message> sink = Sinks.many().multicast().onBackpressureBuffer();
 
     public LangChainConversationService(OpenApiProperties openApiProperties) {
-        System.out.println("Properties " + openApiProperties);
+        final ChatMemoryStore memoryStore = new InMemoryChatMemoryStore();
+        final ChatMemory chatMemory = MessageWindowChatMemory.builder().chatMemoryStore(memoryStore).maxMessages(20).build();
         final ChatLanguageModel openAiChatModel = OpenAiChatModel.withApiKey(openApiProperties.apiKey());
-        this.chain = ConversationalChain.builder()
-                .chatLanguageModel(openAiChatModel)
-//                 .chatMemory()
+        final PromptTemplate promptTemplate = PromptTemplate.from("""
+                Answer the question based on the context below and use the history of the conversation to continue
+                If the question cannot be answered using the information provided answer with "I don't know"
+                              
+                Context:
+                You are deeply knowledgeable about all the National Parks in the United states and you want to 
+                suggest the parks to visit based on the question.
+                              
+                History of the conversation:
+                {{history}}
+                
+                Question: 
+                {{question}}
+
+                Answer: 
+                """);
+        this.chain = CustomConversationChain.Builder.newBuilder().withChatLanguageModel(openAiChatModel)
+                .withMemoryKey("history")
+                .withChatMemory(chatMemory)
+                .withPromptTemplate(promptTemplate)
                 .build();
     }
 
