@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class CustomConversationChain implements Chain<String, String> {
+public class CustomConversationalChain implements Chain<String, String> {
     private static String MEMORY_KEY = "chat_history";
 
     private static String QUESTION_KEY = "question";
@@ -22,7 +22,7 @@ public class CustomConversationChain implements Chain<String, String> {
 
     private final String memoryKey;
 
-    private CustomConversationChain(Builder builder) {
+    private CustomConversationalChain(Builder builder) {
         promptTemplate = builder.promptTemplate;
         chatMemory = builder.chatMemory;
         chatLanguageModel = builder.chatLanguageModel;
@@ -84,8 +84,8 @@ public class CustomConversationChain implements Chain<String, String> {
             return this;
         }
 
-        public CustomConversationChain build() {
-            return new CustomConversationChain(this);
+        public CustomConversationalChain build() {
+            return new CustomConversationalChain(this);
         }
     }
 }

@@ -18,7 +18,7 @@ import reactor.core.publisher.Sinks;
 @Service
 @SessionScope
 public class LangChainConversationService implements ConversationService {
-    private final CustomConversationChain chain;
+    private final CustomConversationalChain chain;
 
     private Sinks.Many<Message> sink = Sinks.many().multicast().onBackpressureBuffer();
 
@@ -42,7 +42,7 @@ public class LangChainConversationService implements ConversationService {
 
                 Answer: 
                 """);
-        this.chain = CustomConversationChain.Builder.newBuilder().withChatLanguageModel(openAiChatModel)
+        this.chain = CustomConversationalChain.Builder.newBuilder().withChatLanguageModel(openAiChatModel)
                 .withMemoryKey("history")
                 .withChatMemory(chatMemory)
                 .withPromptTemplate(promptTemplate)
