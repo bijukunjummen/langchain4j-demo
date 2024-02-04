@@ -1,0 +1,3 @@
+logging:
+  level:
+    org.bk.langchain4j: DEBUG

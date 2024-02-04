@@ -13,16 +13,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CustomConversationalChain implements Chain<String, String> {
-    private static String MEMORY_KEY = "chat_history";
-
-    private static String QUESTION_KEY = "question";
-    private final PromptTemplate promptTemplate;
-    private final ChatMemory chatMemory;
-
-    private final ChatLanguageModel chatLanguageModel;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomConversationalChain.class);
 
+    private static final String MEMORY_KEY = "chat_history";
+    private static final String QUESTION_KEY = "question";
+
+    private final ChatLanguageModel chatLanguageModel;
+    private final PromptTemplate promptTemplate;
+    private final ChatMemory chatMemory;
     private final String memoryKey;
 
     private CustomConversationalChain(Builder builder) {
