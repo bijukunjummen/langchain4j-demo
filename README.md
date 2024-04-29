@@ -42,7 +42,7 @@ data:{
 
 Start it the following way:
 ```sh
-OPENAPI_APIKEY=<openapi_key> ./gradlew bootRun
+SPRING_PROFILES_ACTIVE=openai OPENAI_APIKEY=<openapi_key> ./gradlew bootRun
 ```
 
 ## Testing the agent

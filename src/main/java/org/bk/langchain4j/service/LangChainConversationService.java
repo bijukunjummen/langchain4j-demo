@@ -4,10 +4,8 @@ import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.input.PromptTemplate;
-import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
 import dev.langchain4j.store.memory.chat.InMemoryChatMemoryStore;
-import org.bk.langchain4j.OpenApiProperties;
 import org.bk.langchain4j.model.Message;
 import org.bk.langchain4j.model.MessageSender;
 import org.springframework.stereotype.Service;
@@ -19,13 +17,14 @@ import reactor.core.publisher.Sinks;
 @SessionScope
 public class LangChainConversationService implements ConversationService {
     private final CustomConversationalChain chain;
+    private final ChatLanguageModel chatLanguageModel;
 
     private Sinks.Many<Message> sink = Sinks.many().multicast().onBackpressureBuffer();
 
-    public LangChainConversationService(OpenApiProperties openApiProperties) {
+    public LangChainConversationService(ChatLanguageModel chatLanguageModel) {
+        this.chatLanguageModel = chatLanguageModel;
         final ChatMemoryStore memoryStore = new InMemoryChatMemoryStore();
         final ChatMemory chatMemory = MessageWindowChatMemory.builder().chatMemoryStore(memoryStore).maxMessages(20).build();
-        final ChatLanguageModel openAiChatModel = OpenAiChatModel.withApiKey(openApiProperties.apiKey());
         final PromptTemplate promptTemplate = PromptTemplate.from("""
                 Answer the question based on the context below and use the history of the conversation to continue
                 If the question cannot be answered using the information provided answer with "I don't know"
@@ -42,7 +41,7 @@ public class LangChainConversationService implements ConversationService {
 
                 Answer: 
                 """);
-        this.chain = CustomConversationalChain.Builder.newBuilder().withChatLanguageModel(openAiChatModel)
+        this.chain = CustomConversationalChain.Builder.newBuilder().withChatLanguageModel(this.chatLanguageModel)
                 .withMemoryKey("history")
                 .withChatMemory(chatMemory)
                 .withPromptTemplate(promptTemplate)

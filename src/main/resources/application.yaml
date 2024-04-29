@@ -1,3 +1,6 @@
 logging:
   level:
     org.bk.langchain4j: DEBUG
+
+ollama:
+  base-url: http://

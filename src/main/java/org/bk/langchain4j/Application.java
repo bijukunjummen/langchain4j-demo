@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 @SpringBootApplication
-@EnableConfigurationProperties(OpenApiProperties.class)
+@EnableConfigurationProperties({OpenAiApiProperties.class, OllamaProperties.class})
 public class Application {
 
 	public static void main(String[] args) {
