@@ -4,3 +4,4 @@ logging:
 
 ollama:
   model-name: llama3
+  base-url: http://localhost:11434

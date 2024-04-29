@@ -24,7 +24,7 @@ public class AppConfig {
     @Profile("ollama")
     public ChatLanguageModel ollamaChatLanguageModel(OllamaProperties ollamaProperties) {
         final ChatLanguageModel ollamaChatLanguageModel =
-                OllamaChatModel.builder().modelName(ollamaProperties.modelName()).build();
+                OllamaChatModel.builder().modelName(ollamaProperties.modelName()).baseUrl(ollamaProperties.baseUrl()).build();
         return ollamaChatLanguageModel;
     }
 }
