@@ -3,4 +3,4 @@ logging:
     org.bk.langchain4j: DEBUG
 
 ollama:
-  base-url: http://
+  model-name: llama3
